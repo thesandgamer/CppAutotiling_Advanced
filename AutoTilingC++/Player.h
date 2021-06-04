@@ -15,7 +15,7 @@ public:
 
 	int width;
 	int height;
-
+	Texture2D  sprite;
 
 	void Update();
 	void Draw();
@@ -25,8 +25,6 @@ public:
 	Vector2 GetDirection();
 
 	RectangleI GetRect();
-
-	Texture2D  sprite;
 
 	void Movement();
 	void Move(int horizontalValue, int verticalValue);

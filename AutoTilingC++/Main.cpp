@@ -265,7 +265,7 @@ void RemoveTile(Vector2 position)
     int x = position.x;
     int y = position.y;
     Grid[x][y] = 0; //Reset la value du tableau à l'emplacement x,y
-    cout << "TIle removed "<<x <<" :"  << y<< endl;
+    std::cout << "TIle removed "<<x <<" :"  << y<< endl;
     ChangesTiles();
 }
 
@@ -349,7 +349,7 @@ void RemoverMove()
         
         if ((x <0) || (x > GridWidth) || (y < 0) || (y > GridHeight))
         {
-            cout << "Prochaine case vide" << endl;
+            std::cout << "Prochaine case vide" << endl;
         }
         else
         {
@@ -540,10 +540,10 @@ void BulletCollisions()
         int y = (*itb)->y;
         if (colliding != 0)
         {
-            Vector2 pos = CalculatePositionInGrid(x+GridWidth/2,y+GridHeight/2);
-            DrawRectangle(pos.x*32, pos.y*32, 32, 32, BROWN);
-            RemoveTile(pos);
-            cout << "Pos : " << pos.x << " : " << pos.y << endl;
+            Vector2 pos = CalculatePositionInGrid(x,y);
+            //DrawRectangle(pos.x*32, pos.y*32, 32, 32, BROWN);
+            //RemoveTile(pos);
+            std::cout << "Pos : " << pos.x << " : " << pos.y << endl;
             
             delete(*itb);
             itb = projectile.erase(itb);
@@ -572,13 +572,13 @@ void PlacePlayerStart()
     {
         x = rand() % GridWidth;
         y = rand() % GridHeight;
-        cout << "Pos : " << x << " : " << y << endl;
+        std::cout << "Pos : " << x << " : " << y << endl;
     }
-    cout << "FinalPos : " << x << " : " << y << endl;
+    std::cout << "FinalPos : " << x << " : " << y << endl;
     Vector2 pos = CalculatePositionInGrid(x, y);
     float InGridX = floor(x / CellWidth);
     float InGridY = floor(y / CellHeight);
-    cout << "Pos convertie: " << InGridX << " : " << InGridY << endl;
+    std::cout << "Pos convertie: " << InGridX << " : " << InGridY << endl;
     player = Player(x*CellWidth, y*CellHeight, 32, 32,playerTexture);
     
 
@@ -586,27 +586,19 @@ void PlacePlayerStart()
 
 void PlacePlayerEnd(Vector2 playerStart)
 {
-    //Pareil que pour le player start sauf qu'il faut check si on est pas proche du player start
-    //Du coup on fait spawn un objet playerEnd à cet endroit
+
 
 }
 
 Vector2 CalculateAngle(Vector2 pos1, Vector2 pos2)
 {
-    float angle;
     Vector2 vecteur = { pos1.x-pos2.x, pos1.y-pos2.y};
-    double omega = atan2f(vecteur.y , vecteur.x)*-1;
-    double omegaDeg = omega * 180 / PI;
-    double omegaNorm = sqrt( (vecteur.x * vecteur.x) + (vecteur.y * vecteur.y) );
-    double cosinus = cos(omegaDeg);
-    double sinus = sin(omegaDeg);
+    double vectorLength = sqrt( (vecteur.x * vecteur.x) + (vecteur.y * vecteur.y) );
+    double normVectorX = vecteur.x/ vectorLength;
+    double normVectorY = vecteur.y/ vectorLength;
 
-    Vector2 direction = { cosinus,sinus };
-   //cout << "Angle : " << omegaDeg << endl;
-   cout << "cosinus/sinus : " << cosinus << " : " << sinus << endl;
 
-   // cout << "Angle: " << omegaNorm << endl;
-   // cout << "Vecteur : " << vecteur.x <<" : "  << vecteur.y << endl;
+    Vector2 direction = { normVectorX,normVectorY };
 
    return direction;
 
@@ -616,11 +608,11 @@ void Shoot(Vector2 direction)
 {
     Vector2 size = { 16,16 };
     Vector2 mousePosition = GetMousePosition();
-    Vector2 dir = CalculateAngle(mousePosition, { (float)player.x,(float)player.y });
+    Vector2 dir = CalculateAngle(mousePosition, { (float)(player.x + (player.width / 2)),(float)( player.y + (player.height / 2)) } );
     //Faut un vecteur entre la position du joueur et la position de la souris
     //Faut caluler le sinus/autre 
-    projectile.push_back(new Projectile(player.x, player.y, size, dir, 2));
-    cout << "SHOOT" << endl;
+    projectile.push_back(new Projectile((float)player.x + (player.width / 2), (float)player.y + (player.height / 2), size, dir, 2));
+    std::cout << "SHOOT" << endl;
 
 }
 
@@ -647,6 +639,7 @@ void Uptade()
     BulletCollisions();
     player.Update();
     //Plaçage de tile
+    
     /*
     #pragma region Plaçage de tile
     if ((mousePosition.x > 0) && (mousePosition.x < screenWidth) && (mousePosition.y > 0) && (mousePosition.y < screenHeight))
@@ -679,6 +672,7 @@ void Uptade()
     #pragma endregion
     */
 
+    
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
     {
         Vector2 mouseDirection = GetMousePosition();
